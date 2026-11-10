@@ -12,6 +12,21 @@ const CAMPOS = 'id, marca, descripcion, precio, stock' //Dato común
 //Todas las funciones reciben y envían datos (pasarelas)
 //req (require - solicitar >>>), res (result - <<< resultado) 
 
+
+// Crear - actualizar
+const validarCampos = ({marca, descripcion , precio , stock } = {}) => {
+  const errores = []
+  if (marca.trim()  ===  '' ) errores.push('La marca es obligatoria')
+  if (descripcion.trim()  ===  '') errores.push('La descipcion es necesaria')
+  if (precio === undefined || isNaN(precio) || precio < 0 ) errores.push('Verifique el precio')
+  if (stock === undefined  || !Number.isInteger(stock)  || Number(stock) < 0 ) errores.push('Error en el stock')
+
+    // es posible terner mas de un error
+    return errores
+}
+
+
+
 //API REST -> http://miaplicacion.com/api/productos/
 const listarProductos = async(req, res) => {
   //Se utilizar try - catch porque existe una probabilidad de error
@@ -31,7 +46,6 @@ const listarProductos = async(req, res) => {
     })
   }
 }
-
 //Buscar ¿cómo funciona?
 //API REST -> http://miaplicacion.com/api/productos/1
 const obtenerProducto = async(req, res) => {
@@ -74,7 +88,24 @@ const obtenerProducto = async(req, res) => {
 
 const crearProducto = async(req, res) => {
   try{
+    const errores = validarCampos(req.body) // req.body contiene todos los datos a registrar
+    if (errores.length > 0 ){
+      return res.status(400).json({
+        ok: false,
+        message: 'Verefique los datos solicitados',
+        errores
+      })
+    }
 
+
+    const { marca , descripcion ,precio ,stock } = req.body
+    const consulta = `INSERT INTO productos (marca, descripcion, precio, stock) VALUES (?,?,?;?)`
+    const [registro] = await pool.execute(consulta,[marca,descripcion,precio,stock])
+
+    res.status(201).json({
+      ok: true,
+      id: registro.insertId
+    })
   }catch(e){
     console.error(e)
     res.status(500).json({

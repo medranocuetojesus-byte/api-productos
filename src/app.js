@@ -1,0 +1,20 @@
+// app = appliacation
+const express = require('express')
+const routes = require('./routes')
+
+const app = express() // Inicializamos la App
+
+app.use(express.json()) // Comunicacion es json
+
+//Mensaje predeterminado
+//http://miaplicacion.com
+app.get('/', (req, res) => {
+  res.status(200).json({
+    ok: true,
+    message: 'API REST ejecutándose correctamente'
+  })
+})
+
+//Habilitamos las rutas de todos los módulos (index.js)
+app.use('/api', routes)
+module.exports = app

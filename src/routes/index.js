@@ -4,7 +4,7 @@
 //Provedores > proveedor.controller > provedor.routes
 
 //Todas las rutas se organizan gracias a index.js (indice)
-const { Router, Router } = require('express')
+const { Router } = require('express')
 
 //Esto se realiza por cada routes
 const productoRoutes = require('./producto.routes')

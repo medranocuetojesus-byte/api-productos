@@ -5,14 +5,25 @@
 // const objeto = requiere() // Todos los metodos 
 // const {otroObjeto} = requiere('') // Todos los metodos  // solo algunas funciones
 
+const listarProductos = async(req, res) => {
+  //Se utilizar try - catch porque existe una probabilidad de error
+  try{
+    //Deserialización (obtener el primer el elemento del arreglo)
+    const [productos] = await pool.query('SELECT * FROM productos ORDER BY id')
+    res.status(200).json({
+      ok: true,
+      total: productos.length,
+      data: productos
+    })
+  }catch(e){
+    console.error(e)
+    res.status(500).json({
+      ok: false,
+      message: 'Error interno en el servidor'
+    })
+  }
+}
 
-const { pool } = require('../config/database')
-const CAMPOS = 'id, marca, descripcion, precio, stock' // Dato comun
-
-// Todas las funciones seran asincronas (tardaran un tiempo en ser resultas ...)
-// milisegundos , segundos (1000 = 1seg)
-// Todas las funciones recieben y envian dato (pasarelas)
-const listarProductos = (req , res)  => { }
 
 const obtenerProducto = (req , res)  => { }
 
